@@ -98,14 +98,30 @@ fun Home(
             }
         }
 
-        // LIST DATA (CENTERED — SESUAI MODUL)
+        // LIST DATA — CARD VERSION (COMMIT 3)
         items(listData) { student ->
+            StudentItem(student)
+        }
+    }
+}
+
+@Composable
+fun StudentItem(student: Student) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
             Text(
                 text = student.name,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                textAlign = TextAlign.Center, // 🔥 INI KUNCINYA
+                textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyLarge
             )
         }
