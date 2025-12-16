@@ -7,10 +7,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.lab_week_9_f.ui.theme.LAB_WEEK_9_FTheme
@@ -24,12 +25,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
+                    val listData = remember { mutableStateListOf<Student>() }
+                    val inputField = remember { mutableStateOf(Student("")) }
+
                     Home(
-                        listOf(
-                            "Mobile Programming",
-                            "Jetpack Compose",
-                            "Android Studio"
-                        )
+                        listData = listData,
+                        inputField = inputField
                     )
                 }
             }
@@ -37,12 +39,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+data class Student(
+    val name: String
+)
+
 @Composable
-fun Home(items: List<String>) {
+fun Home(
+    listData: MutableList<Student>,
+    inputField: MutableState<Student>
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        // INPUT AREA
         item {
             Column(
                 modifier = Modifier
@@ -59,16 +70,25 @@ fun Home(items: List<String>) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
+                    value = inputField.value.name,
+                    onValueChange = {
+                        inputField.value = Student(it)
+                    },
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text(text = stringResource(id = R.string.enter_item)) }
+                    label = {
+                        Text(text = stringResource(id = R.string.enter_item))
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = {},
+                    onClick = {
+                        if (inputField.value.name.isNotBlank()) {
+                            listData.add(inputField.value)
+                            inputField.value = Student("")
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(text = stringResource(id = R.string.button_click))
@@ -78,12 +98,14 @@ fun Home(items: List<String>) {
             }
         }
 
-        items(items) { item ->
+        // LIST DATA (CENTERED — SESUAI MODUL)
+        items(listData) { student ->
             Text(
-                text = item,
+                text = student.name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(vertical = 8.dp),
+                textAlign = TextAlign.Center, // 🔥 INI KUNCINYA
                 style = MaterialTheme.typography.bodyLarge
             )
         }
@@ -94,8 +116,12 @@ fun Home(items: List<String>) {
 @Composable
 fun PreviewHome() {
     LAB_WEEK_9_FTheme {
+        val listData = remember { mutableStateListOf<Student>() }
+        val inputField = remember { mutableStateOf(Student("")) }
+
         Home(
-            listOf("Preview 1", "Preview 2")
+            listData = listData,
+            inputField = inputField
         )
     }
 }
